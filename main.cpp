@@ -1,10 +1,13 @@
 #include "pe-vector.hpp"
+using knk::Vector
 
 bool test1()
 {
   knk::Vector< int > v;
   return true;
 }
+
+
 
 int main()
 {
