@@ -8,11 +8,16 @@ namespace knk
    public:
     ~Vector();
     Vector();
-   private:
 
+    bool 
+   private:
     T* data;
-    size_t size, capacity;
+    size_t size_, capacity_;
   };
+}
+template< class T >
+knk::Vector< T >::~Vector() {
+  delete [] data_;
 }
 #endif
   
