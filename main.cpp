@@ -7,7 +7,11 @@ bool test1()
   return true;
 }
 
-
+bool test2()
+{
+  Vector< int > v;
+  return v.isEmpty();
+}
 
 int main()
 {
