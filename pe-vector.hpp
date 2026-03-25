@@ -10,12 +10,14 @@ namespace knk
     Vector();
     Vector(const Vector< T >& rhs) = delete;
     Vector(size_t size, const T& value);
+    explicit Vector(
 
     Vector< T >& operator=(const Vector< T >&rhs) = delete;
 
     bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
-
+    //реализовать + тестирование
+    size_t getCapacity() const noexcept;
     void pushBack(const T&);
     void popBack();
 
