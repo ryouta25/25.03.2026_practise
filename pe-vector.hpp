@@ -10,6 +10,7 @@ namespace knk
     Vector();
 
     bool isEmpty() const noexcept;
+    size_t getSize() const noexcept;
    private:
     T* data;
     size_t size_, capacity_;
