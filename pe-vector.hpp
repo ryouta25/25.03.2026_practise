@@ -4,7 +4,12 @@
 namespace knk
 {
   template< class T >
-  struct Vector {
+  class Vector {
+   public:
+    ~Vector();
+    Vector();
+   private:
+
     T* data;
     size_t size, capacity;
   };
