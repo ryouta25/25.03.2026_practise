@@ -1,32 +1,37 @@
 #include <iostream>
 #include <cstring>
 #include "pe-vector.hpp"
+
 using knk::Vector;
 
-bool testConstructAndDestruct(const char ** pname) {
+bool testConstructAndDestruct(const char** pname) {
   *pname = __func__;
-  knk::Vector< int > v;
+  knk::Vector<int> v;
   return true;
 }
-bool testDefaultVectorIsEmpty(const char ** pname) {
+
+bool testDefaultVectorIsEmpty(const char** pname) {
   *pname = __func__;
-  Vector< int > v;
+  Vector<int> v;
   return v.isEmpty();
 }
+
 bool testSizeOfEmptyVector(const char** pname) {
   *pname = __func__;
-  Vector< int > v;
+  Vector<int> v;
   return !v.getSize();
 }
+
 bool testSizeOfNonEmptyVector(const char** pname) {
   *pname = __func__;
   constexpr size_t size = 2;
-  Vector< int > v(size, 5);
+  Vector<int> v(size, 5);
   return v.getSize() == size;
 }
+
 bool testElementCheckedAccess(const char** pname) {
   *pname = __func__;
-  Vector< int > v;
+  Vector<int> v;
   v.pushBack(2);
   try {
     int& r = v.at(0);
@@ -35,11 +40,12 @@ bool testElementCheckedAccess(const char** pname) {
     return false;
   }
 }
+
 bool testElementCheckedConstAccess(const char** pname) {
   *pname = __func__;
-  Vector< int > v;
+  Vector<int> v;
   v.pushBack(2);
-  const Vector< int >& rv = v;
+  const Vector<int>& rv = v;
   try {
     const int& r = rv.at(0);
     return r == 2;
@@ -47,9 +53,10 @@ bool testElementCheckedConstAccess(const char** pname) {
     return false;
   }
 }
+
 bool testElementCheckedOutOfBoundAccess(const char** pname) {
   *pname = __func__;
-  Vector< int > v;
+  Vector<int> v;
   try {
     v.at(0);
     return false;
@@ -60,9 +67,10 @@ bool testElementCheckedOutOfBoundAccess(const char** pname) {
     return false;
   }
 }
+
 bool testElementCheckedOutOfBoundConstAccess(const char** pname) {
   *pname = __func__;
-  const Vector< int > v;
+  const Vector<int> v;
   try {
     v.at(0);
     return false;
@@ -73,10 +81,11 @@ bool testElementCheckedOutOfBoundConstAccess(const char** pname) {
     return false;
   }
 }
+
 bool testCopyConstructor(const char** pname) {
   *pname = __func__;
-  Vector< int > v{1, 2};
-  Vector< int > yav = v;
+  Vector<int> v{1, 2};
+  Vector<int> yav = v;
   if (v.isEmpty() || yav.isEmpty()) {
     throw std::logic_error("Vectors expected to be non-empty");
   }
@@ -91,38 +100,85 @@ bool testCopyConstructor(const char** pname) {
   return isEqual;
 }
 
+bool testIteratorBasics(const char** pname) {
+  *pname = __func__;
+  Vector<int> v{10, 20, 30};
+  auto it = v.begin();
+  if (*it != 10) {
+    return false;
+  }
+  ++it;
+  if (*it != 20) {
+    return false;
+  }
+  it += 1;
+  if (*it != 30) {
+    return false;
+  }
+  if (it != v.end()) {
+    return false;
+  }
+  --it;
+  return *it == 20;
+}
+
+bool testInsertViaIterator(const char** pname) {
+  *pname = __func__;
+  Vector<int> v{1, 3};
+  auto it = v.begin();
+  ++it;
+  v.insert(it, 2);
+  return v.getSize() == 3 && v[1] == 2;
+}
+
+bool testInsertRangeViaIterator(const char** pname) {
+  *pname = __func__;
+  Vector<int> v1{1, 4};
+  Vector<int> v2{2, 3};
+  v1.insert(v1.begin(), v2.cbegin(), v2.cend());
+  return v1.getSize() == 4 && v1[0] == 2 && v1[2] == 1;
+}
+
+bool testEraseViaIterator(const char** pname) {
+  *pname = __func__;
+  Vector<int> v{1, 2, 3};
+  auto it = v.begin();
+  ++it;
+  v.erase(it);
+  return v.getSize() == 2 && v[1] == 3;
+}
+
 int main() {
-  using test_t = bool(*)(const char **);
-  using case_t = std::pair< test_t, const char * >;
+  using test_t = bool (*)(const char**);
+  using case_t = std::pair<test_t, const char*>;
+
   case_t tests[] = {
-    { testConstructAndDestruct,
-      "Vector must be default"
-      " constructable" },
-    { testDefaultVectorIsEmpty,
-      "Default constructed"
-      " vector must be empty" },
-    { testSizeOfEmptyVector,
-      "Size of empty vector"
-      " must be zero" },
-    { testSizeOfNonEmptyVector,
-      "Size of non-empty vector"
-      " must be greater than zero" },
-    { testElementCheckedAccess, "Inbound access must return lvalue reference to indexed value" },
-    { testElementCheckedOutOfBoundAccess, "Out of bound access must generate exception with specific text" },
-    { testElementCheckedConstAccess, "Same as inbound access but const" },
-    { testElementCheckedOutOfBoundConstAccess, "Same as out of bound but const" },
-    { testCopyConstructor, "Copied vector must be equal to original" }
-  };
+      {testConstructAndDestruct, "Vector must be default constructable"},
+      {testDefaultVectorIsEmpty, "Default constructed vector must be empty"},
+      {testSizeOfEmptyVector, "Size of empty vector must be zero"},
+      {testSizeOfNonEmptyVector, "Size of non-empty vector must be greater than zero"},
+      {testElementCheckedAccess, "Inbound access must return lvalue reference to indexed value"},
+      {testElementCheckedOutOfBoundAccess, "Out of bound access must generate exception with specific text"},
+      {testElementCheckedConstAccess, "Same as inbound access but const"},
+      {testElementCheckedOutOfBoundConstAccess, "Same as out of bound but const"},
+      {testCopyConstructor, "Copied vector must be equal to original"},
+      {testIteratorBasics, "Iterators must support increment, decrement and dereference"},
+      {testInsertViaIterator, "Insert via iterator must place element correctly"},
+      {testInsertRangeViaIterator, "Insert range via iterators must copy elements"},
+      {testEraseViaIterator, "Erase via iterator must remove element"}};
+
   constexpr size_t count = sizeof(tests) / sizeof(case_t);
   size_t failed = 0;
+
   for (size_t i = 0; i < count; ++i) {
-    const char * testName = nullptr;
+    const char* testName = nullptr;
     bool r = false;
     try {
       r = tests[i].first(&testName);
     } catch (const std::logic_error& e) {
       std::cout << "[NOT RUN] " << testName << "\n";
-      std::cout << "\t" << "Reason: " << e.what() << "\n";
+      std::cout << "\t"
+                << "Reason: " << e.what() << "\n";
       ++failed;
       continue;
     }
@@ -132,6 +188,9 @@ int main() {
       std::cout << "\t" << tests[i].second << "\n";
     }
   }
+
   std::cout << "Summary:\n\t" << (count - failed) << " passed\n";
   std::cout << "\t" << count << " total\n";
+
+  return failed > 0 ? 1 : 0;
 }
