@@ -1,13 +1,15 @@
-CXXFLAGS += -Wall -Wextra -Weffc++ -std=c++14 _MMD
+CXXFLAGS += -Wall -Wextra -Weffc++ -std=c++14 -MMD
 
 UNIT_TESTS = pe-vector-tests
 OBJS = main.o
-DEPS = main.d
+DEPS = $(OBJS:%.o=%.d)
 
 $(UNIT_TESTS): $(OBJS)
-	$(CXX) -o $@ $^
+        $(CXX) -o $@ $^
 
 clean:
-	$(RM) $(UNIT_TESTS) $(OBJS) $(DEPS)
+        -@$(RM) $(UNIT_TESTS)
+        -$(DEPS)
+        @$(RM) $(OBJS)
 
 -include main.d
